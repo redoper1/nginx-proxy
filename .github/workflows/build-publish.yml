@@ -29,7 +29,6 @@ jobs:
       matrix:
         flavor: [alpine, debian, dockergen]
     runs-on: ubuntu-latest
-    if: (github.event_name == 'schedule' && github.repository == 'nginx-proxy/nginx-proxy') || (github.event_name != 'schedule')
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -49,9 +48,7 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            ghcr.io/nginx-proxy/nginx-proxy
-            nginxproxy/nginx-proxy
-            jwilder/nginx-proxy
+            ghcr.io/redoper1/nginx-proxy
           tags: |
             type=semver,pattern={{version}},enable=${{ matrix.flavor == 'debian' }}
             type=semver,pattern={{major}}.{{minor}},enable=${{ matrix.flavor == 'debian' }}
@@ -73,12 +70,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v4
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
